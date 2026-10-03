@@ -1,6 +1,10 @@
-# Zashboard Config
+# zashboard-config
+
+> Zashboard 面板配置备份与多设备同步，保持界面设置一致且不包含代理凭据。
 
 [![Validate config](https://github.com/zzpice/zashboard-config/actions/workflows/validate.yml/badge.svg)](https://github.com/zzpice/zashboard-config/actions/workflows/validate.yml)
+
+**配置入口：** [zashboard-settings.json](https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-settings.json)
 
 个人使用的 [Zashboard](https://github.com/Zephyruso/zashboard) 面板配置备份与多设备同步仓库。
 
