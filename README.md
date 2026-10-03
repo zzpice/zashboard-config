@@ -1,47 +1,56 @@
 # Zashboard Config
 
-Personal configuration backup for [Zashboard](https://github.com/Zephyruso/zashboard).
+个人使用的 [Zashboard](https://github.com/Zephyruso/zashboard) 面板配置备份与多设备同步仓库。
 
-## Usage
+## 使用方法
 
-Import this URL in Zashboard:
+在 Zashboard 的“从 URL 导入”中填入：
 
 ```text
 https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-settings.json
 ```
 
-Then enable:
+然后开启：
 
-- Import settings from URL
-- Auto import settings from URL
+- 从 URL 导入设置
+- 自动从 URL 导入
 
-## Update
+首次导入后，其他设备也可以使用同一个地址加载这套配置。
 
-When Zashboard settings are changed:
+## 更新配置
 
-1. Export settings from Zashboard.
-2. Replace `zashboard-settings.json` in this repository.
-3. Commit the change.
-4. Other devices will load the latest configuration automatically.
+当 Zashboard 中的设置有变化时：
 
-## Notes
+1. 在 Zashboard 中导出最新设置。
+2. 用新的文件替换本仓库中的 `zashboard-settings.json`。
+3. 提交更改。
+4. 其他设备会在打开 Zashboard 时自动读取最新配置。
 
-This repository contains Zashboard UI settings only.
+## 当前配置
 
-Do not upload:
+目前主要包含：
 
-- sing-box server configuration
-- Reality private keys
-- UUIDs
-- API secrets
-- SSH credentials
-- subscription URLs containing tokens
+- 字体：MiSans
+- Emoji：noto-color-emoji
+- 基础字号：17.5px
+- 自动切换浅色 / 深色主题
+- 自定义策略组图标
+- 来源 IP 设备标签
+- 代理页、连接页和测速相关设置
 
-## Current preferences
+## 注意事项
 
-- Font: MiSans
-- Emoji: noto-color-emoji
-- Base font size: 17.5px
-- Automatic light/dark theme switching
-- Custom proxy-group icons
-- Source IP device labels
+本仓库仅用于保存 Zashboard 的界面与面板设置。
+
+请勿上传以下内容：
+
+- sing-box 服务端配置
+- Reality 私钥
+- UUID
+- API Secret
+- SSH 凭据
+- 含 Token 的订阅链接
+
+## 配置文件
+
+`zashboard-settings.json` 是 Zashboard 导出的设置文件，也是各设备自动导入时使用的配置源。
