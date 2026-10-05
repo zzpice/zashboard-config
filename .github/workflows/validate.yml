@@ -46,6 +46,16 @@ jobs:
           if parsed.scheme != "https" or not parsed.netloc:
               raise SystemExit("config/import-settings-url must be a valid HTTPS URL.")
 
+          expected_import_url = (
+              "https://raw.githubusercontent.com/zzpice/"
+              "zashboard-config/main/zashboard-settings.json"
+          )
+          if import_url != expected_import_url:
+              raise SystemExit(
+                  "config/import-settings-url must point to the canonical raw "
+                  "zashboard-settings.json URL."
+              )
+
           sensitive_terms = (
               "password",
               "passwd",
