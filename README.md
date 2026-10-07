@@ -1,10 +1,10 @@
-# zashboard-config
+# Zashboard 界面设置
 
-> Zashboard 面板配置备份与多设备同步，保持界面设置一致且不包含代理凭据。
+个人使用的 Zashboard 外观与界面偏好，供多设备导入。公开文件只保存可分享的设置。
 
-[![Validate config](https://github.com/zzpice/zashboard-config/actions/workflows/validate.yml/badge.svg)](https://github.com/zzpice/zashboard-config/actions/workflows/validate.yml)
+[导入说明](#使用方法) · [下载设置](https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-settings.json) · [ZZP · 所有项目](https://zzp.moe/)
 
-**配置入口：** [zashboard-settings.json](https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-settings.json)
+[![检查](https://github.com/zzpice/zashboard-config/actions/workflows/validate.yml/badge.svg)](https://github.com/zzpice/zashboard-config/actions/workflows/validate.yml)
 
 个人使用的 [Zashboard](https://github.com/Zephyruso/zashboard) 面板配置备份与多设备同步仓库。
 
@@ -54,7 +54,6 @@ https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-setting
 - 基础字号：17.5px；
 - 自动切换浅色 / 深色主题；
 - 自定义策略组图标；
-- 来源 IP 设备标签；
 - 代理页、连接页和测速相关设置。
 
 ## 公开边界
@@ -70,8 +69,23 @@ https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-setting
 - API Secret / Token；
 - SSH 凭据。
 
-当前配置可能包含局域网 IP、设备标签和策略组名称。它们不是访问凭据，但仍属于个人网络信息；公开前应确认自己接受这一点。
+公开文件不保留来源 IP 与设备标签映射，`config/source-ip-label-list` 固定为空列表。局域网地址、设备名称和其他个人网络信息放在自己的私有覆盖文件中；应用这类覆盖时关闭自动从公开 URL 导入，避免下次启动时覆盖本地设置。
+
+此前版本曾包含设备映射，本轮已从当前公开文件移除。Git 历史仍能访问旧内容；若其中的信息需要撤回，应另行评估历史清理与受影响环境的调整。
 
 ## 配置文件
 
 `zashboard-settings.json` 是 Zashboard 导出的设置文件，也是各设备自动导入时使用的配置源。
+
+## 项目体系
+
+属于 [ZZP 工具与资源](https://zzp.moe/)。共同的[设计与仓库规范](https://github.com/zzpice/zzp-home/blob/main/docs/design.md)由入口仓库维护；使用步骤、生成产物和验证方式仍以本仓库为准。
+
+## 本地验证
+
+```sh
+python3 scripts/validate.py
+python3 -m unittest discover -s scripts -p 'test_*.py'
+```
+
+校验器检查 JSON、固定导入地址、凭据、节点链接、嵌套 JSON 以及私人地址与设备映射，只输出规则编号，不回显设置内容。

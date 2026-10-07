@@ -6,10 +6,12 @@ on:
     paths:
       - "zashboard-settings.json"
       - ".github/workflows/validate.yml"
+      - "scripts/**"
   pull_request:
     paths:
       - "zashboard-settings.json"
       - ".github/workflows/validate.yml"
+      - "scripts/**"
   workflow_dispatch:
 
 permissions:
@@ -24,88 +26,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Validate Zashboard settings
-        shell: bash
+      - name: Validate public settings
         run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import json
-          import re
-          from pathlib import Path
-          from urllib.parse import urlparse
-
-          path = Path("zashboard-settings.json")
-          raw = path.read_text(encoding="utf-8")
-          data = json.loads(raw)
-
-          if not isinstance(data, dict):
-              raise SystemExit("Top-level JSON value must be an object.")
-
-          import_url = data.get("config/import-settings-url", "")
-          parsed = urlparse(import_url)
-          if parsed.scheme != "https" or not parsed.netloc:
-              raise SystemExit("config/import-settings-url must be a valid HTTPS URL.")
-
-          expected_import_url = (
-              "https://raw.githubusercontent.com/zzpice/"
-              "zashboard-config/main/zashboard-settings.json"
-          )
-          if import_url != expected_import_url:
-              raise SystemExit(
-                  "config/import-settings-url must point to the canonical raw "
-                  "zashboard-settings.json URL."
-              )
-
-          sensitive_terms = (
-              "password",
-              "passwd",
-              "secret",
-              "token",
-              "private_key",
-              "private-key",
-              "api_key",
-              "api-key",
-              "apikey",
-          )
-
-          proxy_schemes = re.compile(
-              r"(?i)(?:ss|ssr|vmess|vless|trojan|hysteria2?|tuic|ssh)://"
-          )
-          basic_auth_url = re.compile(
-              r"(?i)https?://[^/\s:@]+:[^@\s/]+@"
-          )
-
-          def is_nonempty(value):
-              return value not in (None, "", [], {})
-
-          def walk(value, location="$"):
-              if isinstance(value, dict):
-                  for key, item in value.items():
-                      key_lower = str(key).lower()
-                      if any(term in key_lower for term in sensitive_terms) and is_nonempty(item):
-                          raise SystemExit(f"Possible sensitive field at {location}.{key}")
-                      walk(item, f"{location}.{key}")
-                  return
-
-              if isinstance(value, list):
-                  for index, item in enumerate(value):
-                      walk(item, f"{location}[{index}]")
-                  return
-
-              if isinstance(value, str):
-                  if proxy_schemes.search(value):
-                      raise SystemExit(f"Proxy/node URL detected at {location}")
-                  if basic_auth_url.search(value):
-                      raise SystemExit(f"HTTP URL with embedded credentials detected at {location}")
-
-                  stripped = value.strip()
-                  if stripped.startswith(("{", "[")):
-                      try:
-                          nested = json.loads(stripped)
-                      except json.JSONDecodeError:
-                          return
-                      walk(nested, f"{location}<json>")
-
-          walk(data)
-          print("zashboard-settings.json: OK")
-          PY
+          python3 scripts/validate.py
+          python3 -m unittest discover -s scripts -p 'test_*.py'
