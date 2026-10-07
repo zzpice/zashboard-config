@@ -2,10 +2,11 @@
 import ipaddress
 import json
 import re
+from urllib.parse import urlsplit, unquote
 from pathlib import Path
 
 CANONICAL = "https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-settings.json"
-SENSITIVE = ("password", "passwd", "secret", "token", "private_key", "private-key", "api_key", "api-key", "apikey")
+SENSITIVE = ("password", "passwd", "secret", "token", "private_key", "private-key", "api_key", "api-key", "apikey", "authorization", "credential", "cookie", "subscription")
 NODE = re.compile(r"(?i)(?:ss|ssr|vmess|vless|trojan|hysteria2?|tuic|ssh)://")
 AUTH = re.compile(r"(?i)https?://[^/\s:@]+:[^@\s/]+@")
 IP = re.compile(r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])")
@@ -26,35 +27,54 @@ def validate(data):
     if labels != []:
         raise ValueError("device-map")
 
-    def walk(value):
+    def walk(value, depth=0):
+        if depth > 32:
+            raise ValueError("nested-depth")
         if isinstance(value, dict):
             for key, item in value.items():
                 if any(term in str(key).lower() for term in SENSITIVE) and item not in (None, "", [], {}):
                     raise ValueError("credential-field")
-                walk(item)
+                walk(item, depth+1)
         elif isinstance(value, list):
             for item in value:
-                walk(item)
+                walk(item, depth+1)
         elif isinstance(value, str):
-            if NODE.search(value) or AUTH.search(value) or "-----BEGIN " in value:
+            decoded = unquote(value)
+            for match in re.finditer(r"(?i)https?://[^\s\"'<>]+", decoded):
+                try:
+                    url = urlsplit(match.group())
+                    if url.username is not None or url.password is not None:
+                        raise ValueError("credential-value")
+                    hostname = url.hostname or ""
+                    if hostname.lower() in {"localhost"} or hostname.lower().endswith((".local", ".lan", ".internal", ".home")):
+                        raise ValueError("private-host")
+                    try:
+                        ipaddress.ip_address(hostname)
+                    except ValueError:
+                        pass
+                    else:
+                        raise ValueError("network-address")
+                except ValueError as error:
+                    if str(error) in {"credential-value", "private-host", "network-address"}: raise
+                    raise ValueError("invalid-url") from None
+            if NODE.search(decoded) or AUTH.search(decoded) or "-----BEGIN " in decoded:
                 raise ValueError("credential-value")
-            if LOCAL_PATH.search(value) or PRIVATE_V6.search(value):
+            if LOCAL_PATH.search(decoded) or PRIVATE_V6.search(decoded):
                 raise ValueError("private-address")
-            for address in IP.findall(value):
+            for address in IP.findall(decoded):
                 try:
                     ip = ipaddress.ip_address(address)
                 except ValueError:
                     continue
-                if not ip.is_global:
-                    raise ValueError("private-address")
-            if re.search(r"(?i)(?:https?://)?[a-z0-9.-]+\.(?:local|lan)(?=[:/\s\"']|$)", value):
+                raise ValueError("network-address")
+            if re.search(r"(?i)(?:https?://)?[a-z0-9.-]+\.(?:local|lan|internal|home)(?=[:/\s\"']|$)", decoded):
                 raise ValueError("private-host")
             if value.strip().startswith(("{", "[")):
                 try:
                     nested = json.loads(value)
                 except json.JSONDecodeError:
                     return
-                walk(nested)
+                walk(nested, depth+1)
     walk(data)
 
 if __name__ == "__main__":

@@ -20,6 +20,12 @@ class PublicBoundary(unittest.TestCase):
             {"url":"http://example-device.local/"}, {"url":"http://[fd12::1]/"},
             {"url":"https://example:password@example.invalid/"}, {"url":"vless://example"},
             {"path":"/Users/example/private"},
+            {"url":"https://[2001:db8::1]/"}, {"url":"https://203.0.113.1/"},
+            {"url":"https://example@service.example/"},
+            {"url":"http://localhost/"}, {"url":"https://device.internal/"},
+            {"url":"https%3A%2F%2Fexample%3Apassword%40service.example%2F"},
+            {"subscription":"synthetic"}, {"cookie":"synthetic"},
+            {"address":"192%2E168%2E1%2E2"}, {"path":"%2FUsers%2Fexample%2Fprivate"},
         ]:
             with self.subTest(kind=next(iter(value))):
                 with self.assertRaises(ValueError):

@@ -41,7 +41,8 @@ https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-setting
 - 自动导入 URL 是否使用 HTTPS；
 - 是否出现明显的密码、Token、Secret、私钥字段；
 - 是否误放入 `ss://`、`vmess://`、`vless://`、`trojan://`、`hysteria2://`、`tuic://` 等节点链接；
-- 是否出现带用户名密码的 HTTP Basic Auth URL。
+- 是否出现带用户名的 HTTP URL、IPv4 / IPv6 地址、localhost 与私人网络名称；
+- URL 编码和内嵌 JSON 中是否藏有上述内容，嵌套深度是否异常。
 
 这些检查是防呆措施，不能代替提交前的人工检查。
 
@@ -71,7 +72,7 @@ https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-setting
 
 公开文件不保留来源 IP 与设备标签映射，`config/source-ip-label-list` 固定为空列表。局域网地址、设备名称和其他个人网络信息放在自己的私有覆盖文件中；应用这类覆盖时关闭自动从公开 URL 导入，避免下次启动时覆盖本地设置。
 
-此前版本曾包含设备映射，本轮已从当前公开文件移除。Git 历史仍能访问旧内容；若其中的信息需要撤回，应另行评估历史清理与受影响环境的调整。
+历史版本曾包含设备映射，当前公开文件已移除。Git 历史仍能访问旧内容；若其中的信息需要撤回，应另行评估历史清理与受影响环境的调整。
 
 ## 配置文件
 
@@ -79,7 +80,7 @@ https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-setting
 
 ## 项目体系
 
-属于 [ZZP 工具与资源](https://zzp.moe/)。共同的[设计与仓库规范](https://github.com/zzpice/zzp-home/blob/main/docs/design.md)由入口仓库维护；使用步骤、生成产物和验证方式仍以本仓库为准。
+属于 [ZZP 工具与资源](https://zzp.moe/)。使用、验证与维护方式以本仓库为准。
 
 ## 本地验证
 
