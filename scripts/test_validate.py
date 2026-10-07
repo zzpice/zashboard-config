@@ -9,6 +9,7 @@ class PublicBoundary(unittest.TestCase):
     def test_public_settings(self):
         validate(self.settings)
         validate({**self.settings, "config/icon": "https://zzpice.github.io/assets/icons/example.png"})
+        validate({**self.settings,"config/icon-reflect-list":json.dumps([{"uuid":"example-ui-row","name":"Example","icon":"https://example.invalid/icon.png"}])})
 
     def test_rejects_device_labels_even_without_an_ip(self):
         with self.assertRaisesRegex(ValueError, "device-map"):
@@ -26,6 +27,7 @@ class PublicBoundary(unittest.TestCase):
             {"url":"https%3A%2F%2Fexample%3Apassword%40service.example%2F"},
             {"subscription":"synthetic"}, {"cookie":"synthetic"},
             {"address":"192%2E168%2E1%2E2"}, {"path":"%2FUsers%2Fexample%2Fprivate"},
+            {"uuid":"synthetic-connection-credential"},
         ]:
             with self.subTest(kind=next(iter(value))):
                 with self.assertRaises(ValueError):

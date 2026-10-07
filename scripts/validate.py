@@ -6,7 +6,7 @@ from urllib.parse import urlsplit, unquote
 from pathlib import Path
 
 CANONICAL = "https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-settings.json"
-SENSITIVE = ("password", "passwd", "secret", "token", "private_key", "private-key", "api_key", "api-key", "apikey", "authorization", "credential", "cookie", "subscription")
+SENSITIVE = ("password", "passwd", "secret", "token", "private_key", "private-key", "api_key", "api-key", "apikey", "authorization", "credential", "cookie", "subscription", "uuid")
 NODE = re.compile(r"(?i)(?:ss|ssr|vmess|vless|trojan|hysteria2?|tuic|ssh)://")
 AUTH = re.compile(r"(?i)https?://[^/\s:@]+:[^@\s/]+@")
 IP = re.compile(r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])")
@@ -27,17 +27,19 @@ def validate(data):
     if labels != []:
         raise ValueError("device-map")
 
-    def walk(value, depth=0):
+    def walk(value, depth=0, path=()):
         if depth > 32:
             raise ValueError("nested-depth")
         if isinstance(value, dict):
             for key, item in value.items():
-                if any(term in str(key).lower() for term in SENSITIVE) and item not in (None, "", [], {}):
+                # Zashboard's icon rows have UI identities, not connection credentials.
+                ui_id = str(key) == "uuid" and len(path) == 2 and path[0] == "config/icon-reflect-list" and path[1].isdigit() and set(value) == {"uuid", "name", "icon"} and all(isinstance(value[k], str) for k in ("name", "icon"))
+                if not ui_id and any(term in str(key).lower() for term in SENSITIVE) and item not in (None, "", [], {}):
                     raise ValueError("credential-field")
-                walk(item, depth+1)
+                walk(item, depth+1, path+(str(key),))
         elif isinstance(value, list):
-            for item in value:
-                walk(item, depth+1)
+            for index, item in enumerate(value):
+                walk(item, depth+1, path+(str(index),))
         elif isinstance(value, str):
             decoded = unquote(value)
             for match in re.finditer(r"(?i)https?://[^\s\"'<>]+", decoded):
@@ -74,7 +76,7 @@ def validate(data):
                     nested = json.loads(value)
                 except json.JSONDecodeError:
                     return
-                walk(nested, depth+1)
+                walk(nested, depth+1, path)
     walk(data)
 
 if __name__ == "__main__":

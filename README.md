@@ -44,7 +44,7 @@ https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-setting
 - 是否出现带用户名的 HTTP URL、IPv4 / IPv6 地址、localhost 与私人网络名称；
 - URL 编码和内嵌 JSON 中是否藏有上述内容，嵌套深度是否异常。
 
-这些检查是防呆措施，不能代替提交前的人工检查。
+图标规则列表中仅允许既有 UI 行结构使用 `uuid`；其他位置的 UUID 字段按连接凭据拒绝。这些检查是防呆措施，不能代替提交前的人工检查。
 
 ## 当前配置
 
