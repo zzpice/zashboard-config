@@ -1,12 +1,10 @@
 # Zashboard 界面设置
 
-个人使用的 Zashboard 外观与界面偏好，供多设备导入。公开文件只保存可分享的设置。
+个人使用的 [Zashboard](https://github.com/Zephyruso/zashboard) 外观与界面偏好，供多设备导入。公开文件只保存可分享的设置。
 
 [导入说明](#使用方法) · [下载设置](https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-settings.json) · [ZZP · 所有项目](https://zzp.moe/)
 
 [![检查](https://github.com/zzpice/zashboard-config/actions/workflows/validate.yml/badge.svg)](https://github.com/zzpice/zashboard-config/actions/workflows/validate.yml)
-
-个人使用的 [Zashboard](https://github.com/Zephyruso/zashboard) 面板配置备份与多设备同步仓库。
 
 ## 使用方法
 
@@ -77,10 +75,6 @@ https://raw.githubusercontent.com/zzpice/zashboard-config/main/zashboard-setting
 ## 配置文件
 
 `zashboard-settings.json` 是 Zashboard 导出的设置文件，也是各设备自动导入时使用的配置源。
-
-## 项目体系
-
-属于 [ZZP 工具与资源](https://zzp.moe/)。使用、验证与维护方式以本仓库为准。
 
 ## 本地验证
 

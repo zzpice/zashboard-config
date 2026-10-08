@@ -1,4 +1,4 @@
-name: Validate config
+name: Validate Zashboard settings
 
 on:
   push:
